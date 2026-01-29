@@ -21,15 +21,17 @@ import {
 
 /**
  * API Key Handling:
- * This block securely retrieves your API key from Vercel's Environment Variables.
+ * Standard Vite approach for Vercel. VITE_ prefix is mandatory.
  */
-let apiKey = "";
-try {
-  apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
-} catch (e) {
-  apiKey = ""; 
-}
+const getApiKey = () => {
+  try {
+    return import.meta.env.VITE_GEMINI_API_KEY || "";
+  } catch (e) {
+    return "";
+  }
+};
 
+const apiKey = getApiKey();
 const MODEL_NAME = "gemini-2.5-flash-preview-09-2025";
 
 const App = () => {
@@ -98,7 +100,7 @@ const App = () => {
     if (!image) return;
 
     if (!apiKey && typeof __firebase_config === 'undefined') {
-      setError("API Key missing. Please ensure VITE_GEMINI_API_KEY is set in Vercel.");
+      setError("API Key missing. Please ensure VITE_GEMINI_API_KEY is set in Vercel settings.");
       return;
     }
 
@@ -171,6 +173,14 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-4 md:p-8">
+      {/* Injecting custom animations that aren't in standard Tailwind CDN */}
+      <style>{`
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        .animate-slide-up { animation: slideUp 0.5s ease-out forwards; }
+      `}</style>
+
       <div className="max-w-6xl mx-auto">
         <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
@@ -255,7 +265,7 @@ const App = () => {
                 </div>
               </div>
             ) : results ? (
-              <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="space-y-6 animate-fade-in animate-slide-up">
                 <div className="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-2xl p-6 text-white shadow-xl relative">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-xl font-bold flex items-center gap-2">
@@ -298,7 +308,6 @@ const App = () => {
   );
 };
 
-// VERCEL ENTRY POINT: This block connects your code to the 'root' div in index.html.
 const rootElement = document.getElementById('root');
 if (rootElement) {
   const root = ReactDOM.createRoot(rootElement);

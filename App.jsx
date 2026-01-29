@@ -32,7 +32,7 @@ try {
 
 const MODEL_NAME = "gemini-2.5-flash-preview-09-2025";
 
-const PromptArchitect = () => {
+const App = () => {
   const [image, setImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [analyzing, setAnalyzing] = useState(false);
@@ -369,5 +369,4 @@ const PromptArchitect = () => {
   );
 };
 
-export default App = PromptArchitect;
-               
+export default App;

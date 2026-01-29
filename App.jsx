@@ -18,7 +18,18 @@ import {
   Zap
 } from 'lucide-react';
 
-const apiKey = "";
+/**
+ * API Key Handling:
+ * We use a try-catch block to safely access environment variables in different build targets.
+ * On Vercel, this will pull from the Environment Variables you set in the dashboard.
+ */
+let apiKey = "";
+try {
+  apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
+} catch (e) {
+  apiKey = ""; 
+}
+
 const MODEL_NAME = "gemini-2.5-flash-preview-09-2025";
 
 const PromptArchitect = () => {
@@ -86,6 +97,12 @@ const PromptArchitect = () => {
 
   const analyzeImage = async () => {
     if (!image) return;
+
+    // Safety check for API key
+    if (!apiKey && typeof __firebase_config === 'undefined') {
+      setError("API Key missing. Ensure VITE_GEMINI_API_KEY is set in Vercel Environment Variables.");
+      return;
+    }
 
     setAnalyzing(true);
     setError(null);
@@ -353,3 +370,4 @@ const PromptArchitect = () => {
 };
 
 export default App = PromptArchitect;
+               
